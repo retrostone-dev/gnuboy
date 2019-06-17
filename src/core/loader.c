@@ -103,12 +103,12 @@ static int memfill = -1, memrand = -1;
 static void initmem(void *mem, int size)
 {
 	char *p = mem;
-	if (memrand >= 0)
+	/*if (memrand >= 0)
 	{
 		srand(memrand ? memrand : time(0));
 		while(size--) *(p++) = rand();
 	}
-	else if (memfill >= 0)
+	else if (memfill >= 0)*/
 		memset(p, memfill, size);
 }
 

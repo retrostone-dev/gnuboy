@@ -22,7 +22,6 @@ char *strdup();
 
 #include "defs.h"
 #include "pcm.h"
-#include "rc.h"
 
 /* FIXME - all this code is VERY basic, improve it! */
 

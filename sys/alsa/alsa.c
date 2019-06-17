@@ -11,7 +11,7 @@ struct pcm pcm;
 static int dsp;
 static char *dsp_device;
 static int stereo = 1;
-static int samplerate = 44100;
+static int samplerate = 48000;
 static int sound = 1;
 
 static snd_pcm_t *handle;
@@ -103,7 +103,7 @@ void pcm_init()
 	}
 
 	/* Set period size to settings.aica.BufferSize frames. */
-	frames = 1024;
+	frames = 2048;
 	rc = snd_pcm_hw_params_set_period_size_near(handle, params, &frames, &dir);
 	if (rc < 0)
 	{
@@ -128,7 +128,7 @@ void pcm_init()
 	
 	pcm.stereo = stereo;
 	pcm.hz = samplerate;
-	pcm.len = 1024;
+	pcm.len = 2048;
 	pcm.buf = malloc(pcm.len);
 	
 	return;

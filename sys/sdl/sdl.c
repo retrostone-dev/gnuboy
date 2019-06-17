@@ -39,7 +39,7 @@ static int use_altenter = -1;
 static char Xstatus, Ystatus;
 
 static byte *fakescreen = NULL;
-static SDL_Surface *screen, *img_background, *backbuffer;
+static SDL_Surface *screen, *backbuffer;
 
 static uint32_t menu_triggers = 0;
 
@@ -229,7 +229,7 @@ void menu()
             }
         }
 
-		SDL_BlitSurface(backbuffer, NULL, screen, NULL);
+		SDL_SoftStretch(backbuffer, NULL, screen, NULL);
 		SDL_Flip(screen);
     }
     
@@ -250,7 +250,7 @@ void vid_init()
 		exit(1);
 	}
 
-	screen = SDL_SetVideoMode(240, 160, 16, SDL_HWSURFACE);
+	screen = SDL_SetVideoMode(0, 0, 16, SDL_HWSURFACE);
 	if(!screen)
 	{
 		printf("SDL: can't set video mode: %s\n", SDL_GetError());
@@ -259,7 +259,7 @@ void vid_init()
 
 	SDL_ShowCursor(0);
 	
-	backbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, screen->w, screen->h, 16, 0, 0, 0, 0);
+	backbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, 240, 160, 16, 0, 0, 0, 0);
 
 	fakescreen = calloc(160*144, 2);
 
@@ -300,8 +300,7 @@ void ev_poll()
 		case SDL_KEYDOWN:
 			switch(event.key.keysym.sym)
 			{
-				case SDLK_BACKSPACE:
-				case SDLK_TAB:
+				case SDLK_3:
 					menu_triggers = 1;
 				break;
 				case SDLK_RETURN:
@@ -333,8 +332,7 @@ void ev_poll()
 		case SDL_KEYUP:
 			switch(event.key.keysym.sym)
 			{
-				case SDLK_BACKSPACE:
-				case SDLK_TAB:
+				case SDLK_3:
 					menu_triggers = 1;
 				break;
 				case SDLK_RETURN:
@@ -424,7 +422,6 @@ void vid_close()
 	setvolume(startvolume);
 	
 	if (fakescreen) free(fakescreen);
-	if (img_background) SDL_FreeSurface(img_background);
 	if (backbuffer) SDL_FreeSurface(backbuffer);
 
 	if (screen)
@@ -464,13 +461,13 @@ void vid_begin()
 				switch(fullscreen) 
 				{
 					case 1: // normal fullscreen
-						bitmap_scale(0,0,160,144,240,160, 160, 0, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels);
+						bitmap_scale(0,0,160,144,screen->w,screen->h, 160, 0, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels);
 						break;
 					case 2: // aspect ratio
-						bitmap_scale(0,0,160,144, 178, 160, 160, screen->w-178, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels+(screen->h-160)/2*screen->w + (screen->w-178)/2);
+						bitmap_scale(0,0,160,144, 498, 448, 160, screen->w-498, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels+(screen->h-448)/2*screen->w + (screen->w-498)/2);
 						break;
 					default: // native resolution
-						bitmap_scale(0,0,160,144,160,144, 160, screen->w-160, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels+(screen->h-144)/2*screen->w + (screen->w-160)/2);
+						bitmap_scale(0,0,160,144,160*3,144*3, 160, screen->w-160*3, (uint16_t* restrict)fakescreen,(uint16_t* restrict)screen->pixels+(screen->h-144*3)/2*screen->w + (screen->w-160*3)/2);
 						break;
 				}
 				SDL_UnlockSurface(screen);
